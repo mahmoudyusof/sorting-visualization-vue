@@ -5,8 +5,8 @@
       width: `${props.width}px`,
       height: `${props.height}px`,
       left: `${props.pos * props.width + 1}px`,
-      'background-color': props.state ? '#4fc08d' : '#2c3e50'
     }"
+    :class="{default: props.state === 0, sort: props.state === 1, compare: props.state === 2}"
   ></div>
 </template>
 
@@ -15,7 +15,9 @@ export default {
   name: "app-el",
   props: {
     height: Number,
-    width: Number,
+    width: {
+      type: [Number, String]
+    },
     pos: Number,
     state: Number
   }
@@ -28,5 +30,14 @@ export default {
   border-right: 1px solid white;
   position: absolute;
   bottom: 0;
+}
+.default {
+  background-color: #2c3e50;
+}
+.sort {
+  background-color: #4fc08d;
+}
+.compare {
+  background-color: #ff3232;
 }
 </style>

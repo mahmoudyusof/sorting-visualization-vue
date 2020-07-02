@@ -1,11 +1,16 @@
 <template>
   <div id="app">
     <nav>
-      <button @click="shuffle">Shuffle</button>
-      <button @click="mergeSort(arr, 0)">Merge</button>
-      <button>Bubble</button>
-      <button>Insertion</button>
-      <button>Quick</button>
+      <div class="sorters">
+        <button @click="shuffle">Shuffle</button>
+        <button @click="mergeSort(arr, 0)">Merge</button>
+        <button>Bubble</button>
+        <button>Insertion</button>
+        <button>Quick</button>
+      </div>
+      <div class="knobs">
+        <input type="range" v-model="elWidth" min="2" max="40" step="2" />
+      </div>
     </nav>
     <div class="container">
       <div class="array">
@@ -24,20 +29,16 @@
 
 <script>
 import Element from "./components/Element.vue";
+import merge from "./mixins/merge.js";
 
 export default {
   name: "App",
+  mixins: [merge],
   components: {
     "app-el": Element
   },
   created() {
-    const steps = Math.floor(this.width / this.elWidth);
-    const step_height = Math.floor(this.height / steps);
-    for (let i = 1; i <= steps; i++) {
-      this.arr.push(i * step_height);
-      this.state.push(0);
-    }
-    this.shuffle();
+    this.initialize();
   },
   data() {
     return {
@@ -59,51 +60,23 @@ export default {
       }
       this.$set(this.state, 0, 0);
     },
-    async mergeSort(ar, start) {
-      if (ar.length == 1) {
-        return ar;
-      } else {
-        let mid = Math.floor(ar.length / 2);
-        let left = await this.mergeSort(ar.slice(0, mid), start);
-        let right = await this.mergeSort(ar.slice(mid), mid + start);
-        for (let i = 0; i < this.arr.length; i++) {
-          if (i >= start && i < start + ar.length) {
-            this.$set(this.state, i, 1);
-          } else {
-            this.$set(this.state, i, 0);
-          }
-        }
-        let s = this.merge(left, right, start, mid + start);
-        await this.populate(s, start);
-        return s;
-      }
-    },
-    merge(a, b, start, mid) {
-      let res = [];
-      while (a.length && b.length) {
-        if (a[0] >= b[0]) {
-          res.push(b[0]);
-          b.shift();
-        } else {
-          res.push(a[0]);
-          a.shift();
-        }
-      }
-      if (!a.length) {
-        res = res.concat(b);
-      } else if (!b.length) {
-        res = res.concat(a);
-      }
-      return res;
-    },
-    async populate(ar, start) {
-      for (let i = 0; i < ar.length; i++) {
-        this.$set(this.arr, start + i, ar[i]);
-        await this.sleep(10);
-      }
-    },
     sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
+    },
+    initialize() {
+      const steps = Math.floor(this.width / this.elWidth);
+      const step_height = Math.floor(this.height / (this.width / this.elWidth));
+      for (let i = 1; i <= steps; i++) {
+        this.arr.push(i * step_height);
+        this.state.push(0);
+      }
+      this.shuffle();
+    }
+  },
+  watch: {
+    elWidth() {
+      this.arr = [];
+      this.initialize();
     }
   }
 };
