@@ -6,10 +6,10 @@
         <button @click="mergeSort(arr, 0)">Merge</button>
         <button>Bubble</button>
         <button>Insertion</button>
-        <button>Quick</button>
+        <button @click="quickSort(0, arr.length-1)">Quick</button>
       </div>
       <div class="knobs">
-        <input type="range" v-model="elWidth" min="2" max="40" step="2" />
+        <input type="range" v-model="elWidth" min="2" max="80" step="2" />
       </div>
     </nav>
     <div class="container">
@@ -30,10 +30,11 @@
 <script>
 import Element from "./components/Element.vue";
 import merge from "./mixins/merge.js";
+import quick from "./mixins/quick.js";
 
 export default {
   name: "App",
-  mixins: [merge],
+  mixins: [merge, quick],
   components: {
     "app-el": Element
   },

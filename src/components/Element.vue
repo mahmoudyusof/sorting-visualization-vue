@@ -6,7 +6,12 @@
       height: `${props.height}px`,
       left: `${props.pos * props.width + 1}px`,
     }"
-    :class="{default: props.state === 0, sort: props.state === 1, compare: props.state === 2}"
+    :class="{
+      default: props.state === 0,
+      sort: props.state === 1,
+      compare: props.state === 2,
+      pivot: props.state === 3
+    }"
   ></div>
 </template>
 
@@ -39,5 +44,8 @@ export default {
 }
 .compare {
   background-color: #ff3232;
+}
+.pivot {
+  background-color: #ffff6a;
 }
 </style>
