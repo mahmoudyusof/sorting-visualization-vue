@@ -40,10 +40,5 @@ export default {
       }
       return left;
     },
-    swap(i, j) {
-      let temp = this.arr[i];
-      this.$set(this.arr, i, this.arr[j]);
-      this.$set(this.arr, j, temp);
-    },
   },
 };

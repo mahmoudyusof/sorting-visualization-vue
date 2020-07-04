@@ -2,14 +2,14 @@
   <div id="app">
     <nav>
       <div class="sorters">
-        <button @click="shuffle">Shuffle</button>
-        <button @click="mergeSort(arr, 0)">Merge</button>
-        <button>Bubble</button>
-        <button>Insertion</button>
-        <button @click="quickSort(0, arr.length-1)">Quick</button>
+        <button @click="shuffle" :disabled="sorting">Shuffle</button>
+        <button @click="sort('merge')" :disabled="sorting">Merge</button>
+        <button @click="sort('tim')" :disabled="sorting">Tim</button>
+        <button @click="sort('insertion')" :disabled="sorting">Insertion</button>
+        <button @click="sort('quick')" :disabled="sorting">Quick</button>
       </div>
       <div class="knobs">
-        <input type="range" v-model="elWidth" min="2" max="80" step="2" />
+        <input :disabled="sorting" type="range" v-model="elWidth" min="2" max="80" step="2" />
       </div>
     </nav>
     <div class="container">
@@ -31,10 +31,12 @@
 import Element from "./components/Element.vue";
 import merge from "./mixins/merge.js";
 import quick from "./mixins/quick.js";
+import insertion from "./mixins/insertion.js";
+import tim from "./mixins/tim.js";
 
 export default {
   name: "App",
-  mixins: [merge, quick],
+  mixins: [merge, quick, insertion, tim],
   components: {
     "app-el": Element
   },
@@ -47,16 +49,15 @@ export default {
       state: [],
       width: 800,
       height: 500,
-      elWidth: 5
+      elWidth: 5,
+      sorting: false
     };
   },
   methods: {
     shuffle() {
       for (let i = this.arr.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
-        let temp = this.arr[i];
-        this.$set(this.arr, i, this.arr[j]);
-        this.$set(this.arr, j, temp);
+        this.swap(i, j);
         this.$set(this.state, i, 0);
       }
       this.$set(this.state, 0, 0);
@@ -72,6 +73,59 @@ export default {
         this.state.push(0);
       }
       this.shuffle();
+    },
+    swap(i, j) {
+      let temp = this.arr[i];
+      this.$set(this.arr, i, this.arr[j]);
+      this.$set(this.arr, j, temp);
+    },
+    merge(a, b, start, mid) {
+      let res = [];
+      let i = 0;
+      let j = 0;
+      while (a.length && b.length) {
+        let s1 = this.state[start + i];
+        let s2 = this.state[mid + j];
+        this.$set(this.state, start + i, 2);
+        this.$set(this.state, mid + j, 2);
+        if (a[0] >= b[0]) {
+          res.push(b[0]);
+          b.shift();
+        } else {
+          res.push(a[0]);
+          a.shift();
+        }
+        this.$set(this.state, start + i, s1);
+        this.$set(this.state, mid + j, s2);
+      }
+      if (!a.length) {
+        res = res.concat(b);
+      } else if (!b.length) {
+        res = res.concat(a);
+      }
+      return res;
+    },
+    async populate(ar, start) {
+      for (let i = 0; i < ar.length; i++) {
+        let s = this.state[start + i];
+        this.$set(this.state, start + i, 2);
+        await this.sleep(1);
+        this.$set(this.arr, start + i, ar[i]);
+        this.$set(this.state, start + i, s);
+      }
+    },
+    async sort(algo) {
+      this.sorting = true;
+      if (algo === "merge") {
+        await this.mergeSort(this.arr, 0);
+      } else if (algo === "insertion") {
+        await this.insertionSort(0, this.arr.length - 1);
+      } else if (algo === "quick") {
+        await this.quickSort(0, this.arr.length - 1);
+      } else if (algo === "tim") {
+        await this.timSort(this.arr, 0);
+      }
+      this.sorting = false;
     }
   },
   watch: {

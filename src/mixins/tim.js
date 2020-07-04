@@ -1,12 +1,13 @@
 export default {
   methods: {
-    async mergeSort(ar, start) {
-      if (ar.length == 1) {
-        return ar;
+    async timSort(ar, start) {
+      if (ar.length <= 32) {
+        await this.insertionSort(start, ar.length + start);
+        return this.arr.slice(start, start + ar.length);
       } else {
         let mid = Math.floor(ar.length / 2);
-        let left = await this.mergeSort(ar.slice(0, mid), start);
-        let right = await this.mergeSort(ar.slice(mid), mid + start);
+        let left = await this.timSort(ar.slice(0, mid), start);
+        let right = await this.timSort(ar.slice(mid), mid + start);
         for (let i = 0; i < this.arr.length; i++) {
           if (i >= start && i < start + ar.length) {
             this.$set(this.state, i, 1);
