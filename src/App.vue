@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <nav>
+      <button @click="shuffle" :disabled="sorting">Shuffle</button>
       <div class="sorters">
-        <button @click="shuffle" :disabled="sorting">Shuffle</button>
         <button @click="sort('merge')" :disabled="sorting">Merge</button>
         <button @click="sort('tim')" :disabled="sorting">Tim</button>
         <button @click="sort('insertion')" :disabled="sorting">Insertion</button>
@@ -85,7 +85,7 @@ export default {
       const steps = Math.floor(this.width / this.elWidth);
       const step_height = this.height / steps;
       for (let i = 1; i <= steps; i++) {
-        this.arr.push(i * step_height);
+        this.arr.push(Math.floor(i * step_height));
         this.state.push(0);
       }
       this.shuffle();
