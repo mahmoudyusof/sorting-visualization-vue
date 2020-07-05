@@ -9,7 +9,22 @@
         <button @click="sort('quick')" :disabled="sorting">Quick</button>
       </div>
       <div class="knobs">
-        <input :disabled="sorting" type="range" v-model="elWidth" min="2" max="80" step="2" />
+        <div class="knob-group">
+          <label for="width">Width</label>
+          <input
+            :disabled="sorting"
+            id="width"
+            type="range"
+            v-model="elWidth"
+            min="2"
+            max="80"
+            step="2"
+          />
+        </div>
+        <div class="knob-group">
+          <label for="delay">Delay</label>
+          <input id="delay" type="range" v-model="delay" min="0" max="1000" step="10" />
+        </div>
       </div>
     </nav>
     <div class="container">
@@ -50,7 +65,8 @@ export default {
       width: 800,
       height: 500,
       elWidth: 5,
-      sorting: false
+      sorting: false,
+      delay: 10
     };
   },
   methods: {
@@ -67,7 +83,7 @@ export default {
     },
     initialize() {
       const steps = Math.floor(this.width / this.elWidth);
-      const step_height = Math.floor(this.height / (this.width / this.elWidth));
+      const step_height = this.height / steps;
       for (let i = 1; i <= steps; i++) {
         this.arr.push(i * step_height);
         this.state.push(0);
@@ -109,7 +125,7 @@ export default {
       for (let i = 0; i < ar.length; i++) {
         let s = this.state[start + i];
         this.$set(this.state, start + i, 2);
-        await this.sleep(1);
+        await this.sleep(this.delay);
         this.$set(this.arr, start + i, ar[i]);
         this.$set(this.state, start + i, s);
       }
@@ -177,6 +193,20 @@ nav button {
 }
 nav button:hover {
   background-color: black;
+  color: white;
+}
+.knobs {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.knob-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 10px;
+}
+.knob-group label {
   color: white;
 }
 </style>

@@ -30,7 +30,7 @@ export default {
         if (left <= right) {
           this.$set(this.state, left, 2);
           this.$set(this.state, right, 2);
-          await this.sleep(10);
+          await this.sleep(this.delay);
           this.swap(left, right);
           this.$set(this.state, left, 0);
           this.$set(this.state, right, 0);

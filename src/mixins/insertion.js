@@ -13,7 +13,7 @@ export default {
       while (this.arr[index] < this.arr[index - 1] && index > start) {
         this.$set(this.state, index, 2);
         this.$set(this.state, index - 1, 2);
-        await this.sleep(1);
+        await this.sleep(this.delay);
         this.swap(index, index - 1);
         this.$set(this.state, index, 1);
         this.$set(this.state, index - 1, 1);
