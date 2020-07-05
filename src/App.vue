@@ -95,51 +95,58 @@ export default {
       this.$set(this.arr, i, this.arr[j]);
       this.$set(this.arr, j, temp);
     },
-    merge(a, b, start, mid) {
-      let res = [];
-      let i = 0;
-      let j = 0;
-      while (a.length && b.length) {
-        let s1 = this.state[start + i];
-        let s2 = this.state[mid + j];
-        this.$set(this.state, start + i, 2);
-        this.$set(this.state, mid + j, 2);
-        if (a[0] >= b[0]) {
-          res.push(b[0]);
-          b.shift();
+    async merge(start, mid, end, auxilaryArray) {
+      let k = start;
+      let i = start;
+      let j = mid + 1;
+      for (let i = 0; i < this.arr.length; i++) {
+        if (i >= start && i <= end) {
+          this.$set(this.state, i, 1);
         } else {
-          res.push(a[0]);
-          a.shift();
+          this.$set(this.state, i, 0);
         }
-        this.$set(this.state, start + i, s1);
-        this.$set(this.state, mid + j, s2);
       }
-      if (!a.length) {
-        res = res.concat(b);
-      } else if (!b.length) {
-        res = res.concat(a);
-      }
-      return res;
-    },
-    async populate(ar, start) {
-      for (let i = 0; i < ar.length; i++) {
-        let s = this.state[start + i];
-        this.$set(this.state, start + i, 2);
+
+      while (i <= mid && j <= end) {
+        this.$set(this.state, i, 2);
+        this.$set(this.state, j, 2);
         await this.sleep(this.delay);
-        this.$set(this.arr, start + i, ar[i]);
-        this.$set(this.state, start + i, s);
+        this.$set(this.state, i, 1);
+        this.$set(this.state, j, 1);
+        if (auxilaryArray[i] <= auxilaryArray[j]) {
+          this.$set(this.arr, k, auxilaryArray[i]);
+          i++;
+        } else {
+          this.$set(this.arr, k, auxilaryArray[j]);
+          j++;
+        }
+        k++;
+      }
+      while (i <= mid) {
+        this.$set(this.arr, k, auxilaryArray[i]);
+        i++;
+        k++;
+      }
+
+      while (j <= end) {
+        this.$set(this.arr, k, auxilaryArray[j]);
+        j++;
+        k++;
+      }
+      for (let x = start; x < k; x++) {
+        auxilaryArray[x] = this.arr[x];
       }
     },
     async sort(algo) {
       this.sorting = true;
       if (algo === "merge") {
-        await this.mergeSort(this.arr, 0);
+        await this.mergeSort(this.arr.slice(), 0, this.arr.length - 1);
       } else if (algo === "insertion") {
         await this.insertionSort(0, this.arr.length - 1);
       } else if (algo === "quick") {
         await this.quickSort(0, this.arr.length - 1);
       } else if (algo === "tim") {
-        await this.timSort(this.arr, 0);
+        await this.timSort(this.arr.slice(), 0, this.arr.length - 1);
       }
       this.sorting = false;
     }

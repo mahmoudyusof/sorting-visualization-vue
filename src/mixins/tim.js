@@ -1,23 +1,22 @@
 export default {
   methods: {
-    async timSort(ar, start) {
-      if (ar.length <= 32) {
-        await this.insertionSort(start, ar.length + start);
-        return this.arr.slice(start, start + ar.length);
-      } else {
-        let mid = Math.floor(ar.length / 2);
-        let left = await this.timSort(ar.slice(0, mid), start);
-        let right = await this.timSort(ar.slice(mid), mid + start);
+    async timSort(auxilaryArray, start, end) {
+      if (end - start <= 32) {
         for (let i = 0; i < this.arr.length; i++) {
-          if (i >= start && i < start + ar.length) {
-            this.$set(this.state, i, 1);
-          } else {
+          if (!(i >= start && i <= end)) {
             this.$set(this.state, i, 0);
           }
         }
-        let s = this.merge(left, right, start, mid + start);
-        await this.populate(s, start);
-        return s;
+        await this.insertionSort(start, end);
+        for (let i = start; i <= end; i++) {
+          auxilaryArray[i] = this.arr[i];
+        }
+        return;
+      } else {
+        let mid = Math.floor((start + end) / 2);
+        await this.timSort(auxilaryArray, start, mid);
+        await this.timSort(auxilaryArray, mid + 1, end);
+        await this.merge(start, mid, end, auxilaryArray);
       }
     },
   },
