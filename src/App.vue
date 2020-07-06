@@ -108,11 +108,9 @@ export default {
       }
 
       while (i <= mid && j <= end) {
-        this.$set(this.state, i, 2);
-        this.$set(this.state, j, 2);
+        this.$set(this.state, k, 2);
         await this.sleep(this.delay);
-        this.$set(this.state, i, 1);
-        this.$set(this.state, j, 1);
+        this.$set(this.state, k, 1);
         if (auxilaryArray[i] <= auxilaryArray[j]) {
           this.$set(this.arr, k, auxilaryArray[i]);
           i++;
