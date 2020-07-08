@@ -5,6 +5,9 @@ export default {
       let pivot = Math.floor((start + end) / 2);
       this.$set(this.state, pivot, 3);
       let index = await this.partition(start, end, pivot);
+      // if you want to see how it would look like if you use parallel processing
+      // await Promise.all([this.quickSort(start, index - 1), this.quickSort(index, end)])
+      // Note that javascript is single thrided, but this is how it WOULD look like
       await this.quickSort(start, index - 1);
       for (let i = start; i < index; i++) {
         this.$set(this.state, i, 1);
